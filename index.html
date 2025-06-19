@@ -2,36 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verifikasi Dokumen</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    h2 { color: green; }
-    .loading { color: gray; font-style: italic; }
-    .error { color: red; }
-  </style>
+  <meta http-equiv="refresh" content="0;url=https://script.google.com/macros/s/AKfycbx2Plbmp1tcXS1L7uJwXG5JXZ-xf3FPdbo82dEX42stmy18CDRSNCvaE5Y3X6pTJmxuig/exec?id=15">
+  <title>Mengalihkan...</title>
 </head>
 <body>
-  <div id="output">
-    <p class="loading">Memuat data verifikasi...</p>
-  </div>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
-    if (!id) {
-      document.getElementById("output").innerHTML = "<p class='error'>Nomor registrasi tidak ditemukan di URL.</p>";
-    } else {
-      fetch(`https://script.google.com/macros/s/AKfycbx2Plbmp1tcXS1L7uJwXG5JXZ-xf3FPdbo82dEX42stmy18CDRSNCvaE5Y3X6pTJmxuig/exec?id=${id}`)
-        .then(res => res.text())
-        .then(html => {
-          document.getElementById("output").innerHTML = html;
-        })
-        .catch(err => {
-          document.getElementById("output").innerHTML = "<p class='error'>Gagal memuat data verifikasi.</p>";
-        });
-    }
-  </script>
+  <p>Mengalihkan ke halaman verifikasi...</p>
 </body>
 </html>
