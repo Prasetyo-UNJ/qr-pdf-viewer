@@ -1,89 +1,56 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sistem Informasi Verifikasi</title>
+  <meta charset="UTF-8">
+  <title>Verifikasi Dokumen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #fff;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #0b5394;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    header img {
-      height: 60px;
-      vertical-align: middle;
-      margin-right: 15px;
-    }
-
-    header h1 {
-      display: inline-block;
-      font-size: 20px;
-      margin: 0;
-      vertical-align: middle;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    h2 {
-      color: green;
-    }
-
-    .error {
-      color: red;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { color: green; text-align: center; }
+    .result { background: #f0f0f0; padding: 20px; border-radius: 10px; }
+    .error { color: red; }
+    header { text-align: center; margin-bottom: 20px; }
+    header img { max-height: 80px; }
   </style>
 </head>
 <body>
   <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Logo-unj.png" alt="Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Logo-unj.png" alt="Logo UNJ" />
     <h1>Sistem Informasi Verifikasi Data Registrasi</h1>
   </header>
 
-  <main>
-    <h2 id="status">Memuat data...</h2>
-    <div id="content"></div>
-  </main>
+  <div id="result" class="result">Memuat data...</div>
 
   <script>
-    const params = new URLSearchParams(location.search);
-    const id = params.get("id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const SHEET_ID = "1OOqTQH7qVQqH7ZDMnGS0ObUzep-09ZUDK84tKOG_1U4";
+    const SHEET_NAME = "Form Responses 1";
 
     if (!id) {
-      document.getElementById("status").innerText = "ID tidak ditemukan di URL.";
-    }
+      document.getElementById("result").innerHTML = "<p class='error'>Parameter ID tidak ditemukan.</p>";
+    } else {
+      const script = document.createElement("script");
+      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+      document.body.appendChild(script);
 
-    function handleData(json) {
-      try {
-        const table = JSON.parse(json.substring(47).slice(0, -2)).table;
-        const rows = table.rows;
-
+      window.google = window.google || {};
+      window.google.visualization = window.google.visualization || {};
+      window.google.visualization.Query = window.google.visualization.Query || {};
+      window.google.visualization.Query.setResponse = function(response) {
+        const rows = response.table.rows;
         let found = false;
 
-        for (let row of rows) {
-          const nomorReg = row.c[2]?.v; // kolom ke-3 (index 2)
-          const nama = row.c[1]?.v;     // kolom ke-2 (index 1)
-          const email = row.c[3]?.v;
-          const asalSekolah = row.c[4]?.v;
+        for (const row of rows) {
+          const cells = row.c;
+          const nomor = cells[2]?.f || cells[2]?.v?.toString();
+          const nama = cells[1]?.v || "";
 
-          if (nomorReg == id) {
-            document.getElementById("status").innerText = "Verifikasi Dokumen Berhasil";
-            document.getElementById("content").innerHTML = `
+          if (nomor == id) {
+            document.getElementById("result").innerHTML = `
+              <h2>Verifikasi Dokumen Berhasil</h2>
               <p><strong>Nama:</strong> ${nama}</p>
-              <p><strong>Nomor Registrasi:</strong> ${nomorReg}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Asal Sekolah:</strong> ${asalSekolah}</p>
+              <p><strong>Nomor Registrasi:</strong> ${nomor}</p>
             `;
             found = true;
             break;
@@ -91,17 +58,10 @@
         }
 
         if (!found) {
-          document.getElementById("status").innerText = "Data tidak ditemukan.";
-          document.getElementById("status").className = "error";
+          document.getElementById("result").innerHTML = "<p class='error'>Data tidak ditemukan.</p>";
         }
-      } catch (error) {
-        document.getElementById("status").innerText = "Gagal memproses data.";
-        document.getElementById("status").className = "error";
-        console.error(error);
-      }
+      };
     }
   </script>
-
-  <script src="https://docs.google.com/spreadsheets/d/1OOqTQH7qVQqH7ZDMnGS0ObUzep-09ZUDK84tKOG_1U4/gviz/tq?tqx=out:json&sheet=Form%20Responses%201&callback=handleData"></script>
 </body>
 </html>
