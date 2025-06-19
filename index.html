@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verifikasi Dokumen</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
     h2 { color: green; }
+    .loading { color: gray; font-style: italic; }
+    .error { color: red; }
   </style>
 </head>
 <body>
-  <h2 id="status">Memuat...</h2>
-  <div id="hasil"></div>
+  <div id="output">
+    <p class="loading">Memuat data verifikasi...</p>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    const endpoint = "https://script.google.com/macros/s/AKfycbx2Plbmp1tcXS1L7uJwXG5JXZ-xf3FPdbo82dEX42stmy18CDRSNCvaE5Y3X6pTJmxuig/exec?id=15; // Ganti dengan Web App kamu
 
     if (!id) {
-      document.getElementById("status").textContent = "❌ Nomor registrasi tidak ditemukan di URL.";
+      document.getElementById("output").innerHTML = "<p class='error'>Nomor registrasi tidak ditemukan di URL.</p>";
     } else {
-      fetch(endpoint)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("status").textContent = "✅ Verifikasi Dokumen Berhasil";
-          document.getElementById("hasil").innerHTML = `
-            <p><strong>Nama:</strong> ${data.nama}</p>
-            <p><strong>Nomor Registrasi:</strong> ${data.nomor}</p>
-          `;
+      fetch(`https://script.google.com/macros/s/AKfycbx2Plbmp1tcXS1L7uJwXG5JXZ-xf3FPdbo82dEX42stmy18CDRSNCvaE5Y3X6pTJmxuig/exec?id=${id}`)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("output").innerHTML = html;
         })
         .catch(err => {
-          document.getElementById("status").textContent = "❌ Gagal mengambil data.";
+          document.getElementById("output").innerHTML = "<p class='error'>Gagal memuat data verifikasi.</p>";
         });
     }
   </script>
